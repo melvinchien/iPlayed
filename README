@@ -3,3 +3,10 @@ Bukkit Plugin
 
 This is my first plugin for my Bukkit Minecraft Server!
 This plugin (I hope) will be able to track the playtime of users on my server.
+
+To Do (in order):
+-implement /played basic feature
+-use MySQL
+-add configurable file to change colours and prefix
+-detect afk players
+-promote users to next rank after certain amount of time
