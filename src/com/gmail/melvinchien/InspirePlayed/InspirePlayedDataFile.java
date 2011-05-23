@@ -14,7 +14,7 @@ public class InspirePlayedDataFile {
 
 	// Load existing data
 	public static void loadMain() {
-		String dataFile = InspirePlayed.directory + "playtimes.txt";
+		String dataFile = InspirePlayed.mainDirectory + "playtimes.txt";
 		InspirePlayedData data = new InspirePlayedData(dataFile);
 
 		data.load();

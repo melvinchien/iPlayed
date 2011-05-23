@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Logger;
+
 import org.bukkit.Server;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -22,16 +24,17 @@ import org.bukkit.plugin.PluginManager;
 
 public class InspirePlayed extends JavaPlugin {
 	private final InspirePlayedPlayerListener playerListener = new InspirePlayedPlayerListener(this);
-	static String directory = "plugins/InspirePlayed/";
-	static File playtimes = new File(directory + "playtimes.db");
-
+	static String mainDirectory = "plugins/InspirePlayed/";
+	static File Playtimes = new File(mainDirectory + "playtimes.db");
+	Logger log = Logger.getLogger("Minecraft");
 	
 
 	public void onEnable() {
-		new File(directory).mkdir();
-		if (!playtimes.exists()) {
+		new File(mainDirectory).mkdir();
+		if (!Playtimes.exists()) {
 			try {
-				playtimes.createNewFile();
+				Playtimes.createNewFile();
+				FileOutputStream out = new FileOutputStream(Playtimes);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -45,10 +48,10 @@ public class InspirePlayed extends JavaPlugin {
 		pm.registerEvent(Event.Type.PLAYER_COMMAND_PREPROCESS, this.playerListener, Event.Priority.Normal, this);
 
 		PluginDescriptionFile pdfFile = this.getDescription();
-		System.out.println(pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!");
+		log.info(pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!");
 	}
 	
 	public void onDisable() {
-		System.out.println("InspirePlayed disabled!");
+		log.info("InspirePlayed is disabled!");
 	}
 }

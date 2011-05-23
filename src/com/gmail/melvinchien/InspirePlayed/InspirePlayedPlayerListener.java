@@ -34,14 +34,11 @@ public class InspirePlayedPlayerListener extends PlayerListener {
 	}
 
 	// Check for /played command
-    public void onPlayerChat(PlayerChatEvent event) {
-    	
-    	String[] split = event.getMessage().split(" ");
-    	
-    	Player player = event.getPlayer();
-			if (split[0].equalsIgnoreCase("/played")) {
-				event.setCancelled(true);
-			}
-
+	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
+		if (commandLabel.equalsIgnoreCase("played")) {
+			return true;
 		}
+		return false;
+	}
+	
 }

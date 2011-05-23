@@ -3,9 +3,8 @@ main: com.gmail.melvinchien.InspirePlayed.InspirePlayed
 version: 0.1
 
 commands:
-    pos:
-        description: blah
-        usage: /pos
-    debug:
-        description: blah blah
-        usage: /debug
+    played:
+        description: See how much time a player has played on this server
+        usage: |
+            /played
+            /played <player>
