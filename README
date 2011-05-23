@@ -6,6 +6,7 @@ This plugin (I hope) will be able to track the playtime of users on my server.
 
 Planned Features (in order):
 -implement /played basic feature
+-implement /played <player> to check other playtimes
 -use MySQL
 -add configurable file to change colours and prefix
 -detect afk players

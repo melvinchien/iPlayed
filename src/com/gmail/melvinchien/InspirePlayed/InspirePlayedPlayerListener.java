@@ -1,6 +1,11 @@
 package com.gmail.melvinchien.InspirePlayed;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import org.bukkit.Location;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerEvent;
@@ -17,6 +22,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 public class InspirePlayedPlayerListener extends PlayerListener {
     private final InspirePlayed plugin;
+    public static HashMap<Player, ArrayList<Double>> playtimes= new HashMap<Player, ArrayList<Double>>();
 
 	public InspirePlayedPlayerListener(InspirePlayed instance) {
 		plugin = instance;
@@ -36,9 +42,15 @@ public class InspirePlayedPlayerListener extends PlayerListener {
 	// Check for /played command
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
 		if (commandLabel.equalsIgnoreCase("played")) {
+			Player player = (Player) sender;
+			plugin.getPlaytime(sender, player);
 			return true;
 		}
 		return false;
+	}
+	
+	public void getPlaytime(Player sender, Player player) {
+		
 	}
 	
 }
