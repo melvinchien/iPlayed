@@ -14,5 +14,7 @@ Planned Features (in order):
 -promote users to next rank after certain amount of time
 
 Changelog:
+May 23, 2011
 0.2 - Player's name not case-sensitive anymore, saves data file on player logout and on /played
+May 21, 2011
 0.1 - Initial
