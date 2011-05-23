@@ -75,12 +75,12 @@ public class InspirePlayed extends JavaPlugin implements Serializable{
 		//pm.registerEvent(Event.Type.PLAYER_COMMAND_PREPROCESS, this.playerListener, Event.Priority.Normal, this);
 
 		PluginDescriptionFile pdfFile = this.getDescription();
-		log.info(pdfFile.getName() + " " + pdfFile.getVersion() + " is enabled.");
+		log.info("[" + pdfFile.getName() + "] " + pdfFile.getName() + " " + pdfFile.getVersion() + " is enabled.");
 	}
 
 	public void onDisable() {
 		saveData(mapTimes, Playtimes);
-		log.info("InspirePlayed is disabled.");
+		log.info("[InspirePlayed] InspirePlayed is disabled.");
 	}
 
 	/*

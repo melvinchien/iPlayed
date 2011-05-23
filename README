@@ -1,16 +1,22 @@
-InspirePlayed
-Bukkit Plugin
+InspirePlayed Plugin for Bukkit
 
-This is my first plugin for my Bukkit Minecraft Server!
-This plugin (I hope) will be able to track the playtime of users on my server.
+This is my first plugin for my Bukkit Minecraft Server at inspire.dre.am:25588!
+
+Purpose: This plugin tracks the amount of time players spend online.
+
+Features:
+-Players can type /played to see their own playtime
+-Players can type /played <player> to see another player's playtime
+-Will send message to player giving days, hours, and minutes spent online
+-Players' names are not case sensitive
+-User data saved to playtimes.dat (not user editable)
+-File saves occur when a player quits or types /played
 
 Planned Features (in order):
--implement /played basic feature
--implement /played <player> to check other playtimes
 -Send back original capitalization of player's name
 -use MySQL
 -add configurable file to change colours and prefix
--detect afk players
+-detect afk players and do not track their aft time
 -promote users to next rank after certain amount of time
 
 Changelog:
