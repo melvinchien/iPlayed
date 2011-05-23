@@ -7,10 +7,12 @@ This plugin (I hope) will be able to track the playtime of users on my server.
 Planned Features (in order):
 -implement /played basic feature
 -implement /played <player> to check other playtimes
+-Send back original capitalization of player's name
 -use MySQL
 -add configurable file to change colours and prefix
 -detect afk players
 -promote users to next rank after certain amount of time
 
 Changelog:
+0.2 - Player's name not case-sensitive anymore, saves data file on player logout and on /played
 0.1 - Initial

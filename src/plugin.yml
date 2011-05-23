@@ -1,11 +1,11 @@
 name: InspirePlayed
 main: com.gmail.melvinchien.InspirePlayed.InspirePlayed
-version: 0.1
+version: 0.2
 
 commands:
     played:
         description: See how much time a player has played on this server
         usage: |
-            InspirePlayed Help:
-            /played
-            /played <player>
+            InspirePlayed Commands:
+            /played             Check your playtime
+            /played <player>    Check another player's playtime
