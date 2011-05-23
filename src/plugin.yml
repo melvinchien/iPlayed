@@ -6,5 +6,6 @@ commands:
     played:
         description: See how much time a player has played on this server
         usage: |
+            InspirePlayed Help:
             /played
             /played <player>
