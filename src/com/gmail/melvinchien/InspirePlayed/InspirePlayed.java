@@ -64,24 +64,10 @@ public class InspirePlayed extends JavaPlugin{
 		log.info("[InspirePlayed] InspirePlayed is disabled.");
 	}
 
-	/*
-	// Load properties if exists already
-	public void loadProcedure() {
-		try {
-			FileInputStream in = new FileInputStream(Playtimes);
-			//prop.load(in);
-			//playerCount = Integer.parseInt(prop.getProperty("PlayerCount"));
-			in.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	 */
-
 	// Save data file
 	public void saveData(HashMap<String, ArrayList<Integer>> playtimes, File file) {
 		try {
-			FileOutputStream fileOut = new FileOutputStream(file);
+			FileOutputStream fileOut = new FileOutputStream(file, false);
 			PrintWriter out = new PrintWriter(fileOut);
 			Iterator it = playtimes.entrySet().iterator();
 			while (it.hasNext()) {
@@ -98,12 +84,12 @@ public class InspirePlayed extends JavaPlugin{
 	@SuppressWarnings("unchecked")
 	public HashMap<String, ArrayList<Integer>> loadData(File file) {
 		HashMap<String, ArrayList<Integer>> oldMapTimes = new HashMap<String, ArrayList<Integer>> ();
-		ArrayList<Integer> oldArrayTimes = new ArrayList<Integer>();
 		try {
 			FileReader fileIn = new FileReader(file);
 			BufferedReader in = new BufferedReader(fileIn);
 			String inText = "";
 			while (in.ready()) {
+				ArrayList<Integer> oldArrayTimes = new ArrayList<Integer>();
 				inText = in.readLine();
 				StringTokenizer st = new StringTokenizer(inText, "=");
 				String player = st.nextToken();
@@ -138,8 +124,7 @@ public class InspirePlayed extends JavaPlugin{
 				return true;
 			}
 			message += formatPlaytime(getPlaytime(player));
-			sender.sendMessage(message);		
-			saveData(mapTimes, Playtimes);
+			sender.sendMessage(message);
 			return true;
 		}
 		return false;
