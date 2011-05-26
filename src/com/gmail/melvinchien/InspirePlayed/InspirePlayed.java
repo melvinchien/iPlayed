@@ -1,15 +1,16 @@
 package com.gmail.melvinchien.InspirePlayed;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
-//import java.util.Properties;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.StringTokenizer;
 import java.util.logging.Logger;
 
 import org.bukkit.command.Command;
@@ -27,16 +28,15 @@ import org.bukkit.plugin.PluginManager;
  * @author VeiN
  */
 
-public class InspirePlayed extends JavaPlugin implements Serializable{
-	private static final long serialVersionUID = 0L;
+public class InspirePlayed extends JavaPlugin{
 	private final InspirePlayedPlayerListener playerListener = new InspirePlayedPlayerListener(this);
 	public static HashMap<String, ArrayList<Integer>> mapTimes = new HashMap<String, ArrayList<Integer>>();
 	private ArrayList<Integer> arrayTimes = new ArrayList<Integer>();
 	static String mainDirectory = "plugins/InspirePlayed/";
-	static File Playtimes = new File(mainDirectory + "playtimes.dat");
-	//static Properties prop = new Properties();
-	//int playerCount;
+	static File Playtimes = new File(mainDirectory + "playtimes.txt");
 	Logger log = Logger.getLogger("Minecraft");
+
+
 	public void onEnable() {
 		// Load properties
 		new File(mainDirectory).mkdir();
@@ -49,30 +49,11 @@ public class InspirePlayed extends JavaPlugin implements Serializable{
 		} else {
 			mapTimes = loadData(Playtimes);
 		}
-		/*
-			// Create new properties file
-			try {
-				Playtimes.createNewFile();
-				FileOutputStream out = new FileOutputStream(Playtimes);
-				prop.put("PlayerCount", "0");
-				prop.store(out, "InspirePlayed Config File");
-				out.flush();
-				out.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		} else {
-			loadProcedure();
-		}
-		InspirePlayedDataFile.loadMain();
-		 */
-
 
 		// Register our events
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvent(Event.Type.PLAYER_JOIN, playerListener, Priority.Highest, this);
 		pm.registerEvent(Event.Type.PLAYER_QUIT, playerListener, Priority.Normal, this);
-		//pm.registerEvent(Event.Type.PLAYER_COMMAND_PREPROCESS, this.playerListener, Event.Priority.Normal, this);
 
 		PluginDescriptionFile pdfFile = this.getDescription();
 		log.info("[" + pdfFile.getName() + "] " + pdfFile.getName() + " " + pdfFile.getVersion() + " is enabled.");
@@ -101,9 +82,12 @@ public class InspirePlayed extends JavaPlugin implements Serializable{
 	public void saveData(HashMap<String, ArrayList<Integer>> playtimes, File file) {
 		try {
 			FileOutputStream fileOut = new FileOutputStream(file);
-			ObjectOutputStream out = new ObjectOutputStream(fileOut);
-			out.writeObject(playtimes);
-			out.flush();
+			PrintWriter out = new PrintWriter(fileOut);
+			Iterator it = playtimes.entrySet().iterator();
+			while (it.hasNext()) {
+				Map.Entry<String, ArrayList<Integer>> pairs = (Map.Entry<String, ArrayList<Integer>>)it.next();
+				out.println(pairs.getKey() + "=" + pairs.getValue().get(0));
+			}
 			out.close();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -114,10 +98,19 @@ public class InspirePlayed extends JavaPlugin implements Serializable{
 	@SuppressWarnings("unchecked")
 	public HashMap<String, ArrayList<Integer>> loadData(File file) {
 		HashMap<String, ArrayList<Integer>> oldMapTimes = new HashMap<String, ArrayList<Integer>> ();
+		ArrayList<Integer> oldArrayTimes = new ArrayList<Integer>();
 		try {
-			FileInputStream fileIn = new FileInputStream(file);
-			ObjectInputStream in = new ObjectInputStream(fileIn);
-			oldMapTimes = (HashMap<String, ArrayList<Integer>>) in.readObject();
+			FileReader fileIn = new FileReader(file);
+			BufferedReader in = new BufferedReader(fileIn);
+			String inText = "";
+			while (in.ready()) {
+				inText = in.readLine();
+				StringTokenizer st = new StringTokenizer(inText, "=");
+				String player = st.nextToken();
+				oldArrayTimes.add(0, Integer.parseInt(st.nextToken()));
+				oldArrayTimes.add(1, 0);
+				oldMapTimes.put(player, oldArrayTimes);
+			}
 			in.close();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -131,7 +124,7 @@ public class InspirePlayed extends JavaPlugin implements Serializable{
 			String player;
 			String message = "";
 			if (args.length == 0) {
-				player = ((Player)sender).getName();
+				player = ((Player)sender).getName().toLowerCase();
 				message = "You have played for ";
 			} else if (args[0].equalsIgnoreCase("help")) {
 				return false;
@@ -155,7 +148,7 @@ public class InspirePlayed extends JavaPlugin implements Serializable{
 	// Login player and update login time
 	// Time in minutes
 	public void login(String player) {
-		int login = (int)(System.currentTimeMillis() / 1000L);
+		int loginTime = (int)(System.currentTimeMillis() / 1000L);
 		arrayTimes = new ArrayList<Integer>(2);
 		arrayTimes.add(0);
 		arrayTimes.add(0);
@@ -164,27 +157,33 @@ public class InspirePlayed extends JavaPlugin implements Serializable{
 		} else {
 			arrayTimes = mapTimes.get(player);			
 		}
-		arrayTimes.set(1, login);
+		arrayTimes.set(1, loginTime);
 	}
 
-	// Logout player and update stats
-	// Time in minutes
+	// Logout Player
 	public void logout(String player) {
 		logout(player, 0);
 	}
 
+	// Logout player and update stats
+	// Time in minutes
 	public void logout(String player, int currentTime) {
-		int logout = (int)(System.currentTimeMillis() / 1000L);
+		int logoutTime = (int)(System.currentTimeMillis() / 1000L);
 		arrayTimes = mapTimes.get(player);
-		int login = arrayTimes.get(1);
-		int currentPlaytime = (int)((logout - login) / 60);
-		int oldPlaytime = arrayTimes.get(0);
-		int newPlaytime = oldPlaytime + currentPlaytime;
-		arrayTimes.set(0, newPlaytime);
-		arrayTimes.set(1, currentTime);
-		saveData(mapTimes, Playtimes);
+		if (arrayTimes.get(1).equals(0)) {
+			return; // Do not update player time if they are offline
+		} else {
+			int loginTime = arrayTimes.get(1);
+			int currentPlaytime = (int)((logoutTime - loginTime) / 60);
+			int oldPlaytime = arrayTimes.get(0);
+			int newPlaytime = oldPlaytime + currentPlaytime;
+			arrayTimes.set(0, newPlaytime);
+			arrayTimes.set(1, currentTime);
+			saveData(mapTimes, Playtimes);
+		}
 	}
 
+	// Update playtime
 	public void updatePlaytime(String player) {
 		int currentTime = (int)(System.currentTimeMillis() / 1000L);
 		logout(player, currentTime);

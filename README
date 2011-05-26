@@ -19,7 +19,14 @@ Planned Features (in order):
 -detect afk players and do not track their aft time
 -promote users to next rank after certain amount of time
 
+Known Bugs:
+
+
+
 Changelog:
+May 25, 2011
+0.3 - Checking playtime of an offline player will no longer update their time incorrectly
+    - Changed output file into a user-editable text file
 May 23, 2011
 0.2 - Player's name not case-sensitive anymore, saves data file on player logout and on /played
 May 21, 2011
