@@ -1,29 +1,50 @@
-InspirePlayed Plugin for Bukkit
+/**
+  * InspirePlayed - A Bukkit playtime plugin for Minecraft
+  * Copyright (C) 2011 Melvin "VeiN" Chien <melvin.chien@gmail.com>
+  * 
+  * This program is free software: you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License as published by
+  * the Free Software Foundation, either version 3 of the License, or
+  * (at your option) any later version.
+  * 
+  * This program is distributed in the hope that it will be useful,
+  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  * GNU General Public License for more details.
+  *
+  * You should have received a copy of the GNU General Public License
+  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  */
 
-This is my first plugin for my Bukkit Minecraft Server at inspire.dre.am:25588!
-
-Purpose: This plugin tracks the amount of time players spend online.
+Purpose: Track amount of time players spend online and last activity time.
 
 Features:
--Players can type /played to see their own playtime
--Players can type /played <player> to see another player's playtime
+-/played - check your own playtime and time of last activity
+-/played <player> - check another player's playtime and time of last activity
 -Will send message to player giving days, hours, and minutes spent online
 -Players' names are not case sensitive
--User data saved to playtimes.dat (not user editable)
+-User data saved to playtimes.txt, user-editable only when server is off
 -File saves occur when a player quits or types /played
 
 Planned Features (in order):
--Send back original capitalization of player's name
--use MySQL
--add configurable file to change colours and prefix
 -detect afk players and do not track their aft time
+-change playtime in game (ops only)
+-add reload command
+-add configurable file to change colours and prefix
 -promote users to next rank after certain amount of time
+-use MySQL
 
 Known Bugs:
-
-
+-Will give errors if playtimes.txt does not have version number on first line
 
 Changelog:
+June 21, 2011
+0.4 - Cleaned up code, added new InspireTime class
+    - Added time of last activity
+    - Added colored text
+    - Sends back original name of user
+    - Added version in first line of data file
+    - Will automatically convert old data files to new format
 May 25, 2011
 0.3 - Checking playtime of an offline player will no longer update their time incorrectly
     - Changed output file into a user-editable text file
