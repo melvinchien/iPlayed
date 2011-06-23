@@ -106,7 +106,9 @@ public class InspirePlayed extends JavaPlugin{
 					inLine = in.readLine();
 					String[] inText = inLine.split(";");
 					long playtime = Long.parseLong(inText[1]);
-					String lastactive = inText[2];
+					String lastactive = "0000000000";
+					if (inText.length == 3)
+						lastactive = inText[2];
 					InspireTime it = new InspireTime(playtime, lastactive);
 					mapTimes.put(inText[0], it);
 				}
@@ -116,7 +118,7 @@ public class InspirePlayed extends JavaPlugin{
 					StringTokenizer st = new StringTokenizer(inLine, "=");
 					String player = st.nextToken();
 					long playtime = Long.parseLong(st.nextToken());
-					InspireTime it = new InspireTime(playtime, "");
+					InspireTime it = new InspireTime(playtime, "0000000000");
 					mapTimes.put(player, it);
 				}
 			in.close();

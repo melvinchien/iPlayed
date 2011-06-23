@@ -38,8 +38,10 @@ Known Bugs:
 -Will give errors if playtimes.txt does not have version number on first line
 
 Changelog:
+June 23, 2011
+0.45 - Fixed user duplication bug due to name capitalization
+     - Fixed latest activity bug due to null values from old data file
 June 21, 2011
-0.45 - Fixed bug with capitalization of names
 0.4 - Cleaned up code, added new InspireTime class
     - Added time of last activity
     - Added colored text

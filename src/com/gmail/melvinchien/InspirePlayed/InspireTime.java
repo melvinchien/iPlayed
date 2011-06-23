@@ -30,7 +30,7 @@ public class InspireTime {
 	}
 
 	public InspireTime() {
-		this(0L, "");
+		this(0L, "0000000000");
 		login();
 	}
 
@@ -96,7 +96,6 @@ public class InspireTime {
 	public String getLastActive() {
 		Calendar cal = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat("z");
-
 		return lastactive.substring(0,2) + "/" + 
 		lastactive.substring(2,4) + "/" +
 		lastactive.substring(4,6) + " at " +

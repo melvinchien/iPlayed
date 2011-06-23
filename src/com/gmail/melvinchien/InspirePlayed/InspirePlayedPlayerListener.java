@@ -38,6 +38,7 @@ public class InspirePlayedPlayerListener extends PlayerListener {
 			plugin.mapTimes.get(player).login();
 		else if (plugin.mapTimes.containsKey(player.toLowerCase())) {
 			plugin.mapTimes.put(player, plugin.mapTimes.get(player.toLowerCase()));
+			plugin.mapTimes.remove(player.toLowerCase());
 			plugin.mapTimes.get(player).login();
 		} else {
 			InspireTime it = new InspireTime();
