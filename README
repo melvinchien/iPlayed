@@ -39,6 +39,7 @@ Known Bugs:
 
 Changelog:
 June 21, 2011
+0.45 - Fixed bug with capitalization of names
 0.4 - Cleaned up code, added new InspireTime class
     - Added time of last activity
     - Added colored text
