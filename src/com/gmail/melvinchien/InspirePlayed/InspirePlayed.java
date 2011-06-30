@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.StringTokenizer;
 import java.util.logging.Logger;
 
 import org.bukkit.ChatColor;
@@ -86,7 +85,8 @@ public class InspirePlayed extends JavaPlugin{
 			out.write(pdf.getVersion() + "\n");
 			Iterator<Map.Entry<String, InspireTime>> mapIt = mapTimes.entrySet().iterator();
 			while (mapIt.hasNext()) {
-				Map.Entry<String, InspireTime> entry = (Map.Entry<String, InspireTime>)mapIt.next();
+				Map.Entry<String, InspireTime> entry = 
+					(Map.Entry<String, InspireTime>)mapIt.next();
 				InspireTime it = entry.getValue();
 				out.write(entry.getKey() + ";" + it.playtime + ";" + it.lastactive + "\n");
 			}
@@ -101,7 +101,7 @@ public class InspirePlayed extends JavaPlugin{
 			BufferedReader in = new BufferedReader(fileIn);
 			String inLine = in.readLine();
 			// Check for old version of playtimes.txt
-			if (inLine.equals(pdf.getVersion()))
+			if (Double.parseDouble(inLine) >= 0.3)
 				while (in.ready()) {
 					inLine = in.readLine();
 					String[] inText = inLine.split(";");
@@ -110,17 +110,10 @@ public class InspirePlayed extends JavaPlugin{
 					if (inText.length == 3)
 						lastactive = inText[2];
 					InspireTime it = new InspireTime(playtime, lastactive);
-					mapTimes.put(inText[0], it);
+					put(inText[0], it);
 				}
 			else
-				while (in.ready()) {
-					inLine = in.readLine();
-					StringTokenizer st = new StringTokenizer(inLine, "=");
-					String player = st.nextToken();
-					long playtime = Long.parseLong(st.nextToken());
-					InspireTime it = new InspireTime(playtime, "0000000000");
-					mapTimes.put(player, it);
-				}
+				log.severe("[" + pdf.getName() + "] " + "Error loading data file!");
 			in.close();
 			log.info("[" + pdf.getName() + "] " + "Data successfully loaded.");
 		} catch (IOException e) {e.printStackTrace();}
@@ -141,7 +134,8 @@ public class InspirePlayed extends JavaPlugin{
 			}
 			Iterator<Map.Entry<String, InspireTime>> mapIt = mapTimes.entrySet().iterator();
 			while (mapIt.hasNext()) {
-				Map.Entry<String, InspireTime> entry = (Map.Entry<String, InspireTime>)mapIt.next();
+				Map.Entry<String, InspireTime> entry = 
+					(Map.Entry<String, InspireTime>)mapIt.next();
 				if (entry.getKey().equalsIgnoreCase(player)) {
 					player = entry.getKey();
 					InspireTime it = entry.getValue();
@@ -159,7 +153,45 @@ public class InspirePlayed extends JavaPlugin{
 			sender.sendMessage(ChatColor.GREEN + "[IP] " + ChatColor.RED + 
 					player + ChatColor.WHITE + " does not exist!");
 			return true;
+		} else if (commandLabel.equalsIgnoreCase("InspirePlayed")) {
+			if (sender.isOp()) {
+				if (args.length == 0)
+					return false;
+				else if (args[0].equalsIgnoreCase("load")) {
+					loadData();
+					sender.sendMessage(ChatColor.GREEN + "[IP] " + 
+							ChatColor.WHITE + "Data successfully loaded.");
+				} else if (args[0].equalsIgnoreCase("save")) {
+					saveData();
+					sender.sendMessage(ChatColor.GREEN + "[IP] " + 
+							ChatColor.WHITE + "Data successfully saved.");
+				} else if (args[0].equalsIgnoreCase("version")) {
+					sender.sendMessage(ChatColor.GREEN + "[IP] " + 
+							ChatColor.WHITE + "Version " + ChatColor.RED + pdf.getVersion() + 
+							ChatColor.WHITE + " is currently running.");
+				} 
+			} else {
+				sender.sendMessage(ChatColor.RED + 
+				"You do not have permission to use this command!");
+			}
+			return true;
 		}
 		return false;
+	}
+
+	public boolean contains(String player) {
+		return mapTimes.containsKey(player);
+	}
+
+	public InspireTime get(String player) {
+		return mapTimes.get(player);
+	}
+
+	public void put(String player, InspireTime it) {
+		mapTimes.put(player, it);
+	}
+
+	public void remove(String player) {
+		mapTimes.remove(player);
 	}
 }

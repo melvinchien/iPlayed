@@ -21,23 +21,28 @@ Purpose: Track amount of time players spend online and last activity time.
 Features:
 -/played - check your own playtime and time of last activity
 -/played <player> - check another player's playtime and time of last activity
--Will send message to player giving days, hours, and minutes spent online
+-Sends days, hours, and minutes spent online and time of last activity
 -Players' names are not case sensitive
 -User data saved to playtimes.txt, user-editable only when server is off
 -File saves occur when a player quits or types /played
+-Ops can load and save the plugin
 
-Planned Features (in order):
--detect afk players and do not track their aft time
--change playtime in game (ops only)
--add reload command
+Planned Features (in order of priority):
+-detect afk players and do not track their afk time
+-ops can change playtime in game
 -add configurable file to change colours and prefix
 -promote users to next rank after certain amount of time
 -use MySQL
 
 Known Bugs:
--Will give errors if playtimes.txt does not have version number on first line
+-
 
 Changelog:
+June 30, 2011
+0.5 - Added load command
+    - Added save command
+    - Added version command
+    - Removed code for converting old data files
 June 23, 2011
 0.45 - Fixed user duplication bug due to name capitalization
      - Fixed latest activity bug due to null values from old data file

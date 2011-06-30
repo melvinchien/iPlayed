@@ -34,21 +34,21 @@ public class InspirePlayedPlayerListener extends PlayerListener {
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		String player = event.getPlayer().getName();
 
-		if (plugin.mapTimes.containsKey(player))
-			plugin.mapTimes.get(player).login();
-		else if (plugin.mapTimes.containsKey(player.toLowerCase())) {
-			plugin.mapTimes.put(player, plugin.mapTimes.get(player.toLowerCase()));
-			plugin.mapTimes.remove(player.toLowerCase());
-			plugin.mapTimes.get(player).login();
+		if (plugin.contains(player))
+			plugin.get(player).login();
+		else if (plugin.contains(player.toLowerCase())) {
+			plugin.put(player, plugin.get(player.toLowerCase()));
+			plugin.remove(player.toLowerCase());
+			plugin.get(player).login();
 		} else {
 			InspireTime it = new InspireTime();
-			plugin.mapTimes.put(player, it);
+			plugin.put(player, it);
 		}
 	}
 
 	public void onPlayerKick(PlayerKickEvent event) {
 		String player = event.getPlayer().getName();
-		plugin.mapTimes.get(player).logout();
+		plugin.get(player).logout();
 		plugin.saveData();
 	}
 

@@ -1,11 +1,17 @@
 name: InspirePlayed
 main: com.gmail.melvinchien.InspirePlayed.InspirePlayed
-version: 0.45
-
+version: 0.5
+author: VeiN
+description: Track playtime and last activity time of players
 commands:
     played:
-        description: Track playtime and last activity time of players
+        description: Check playtime and last activity
         usage: |
-            InspirePlayed Commands:
             /played                Check your playtime and last activity
-            /played <player>    Check another player's playtime and last activity
+            /played <player>    Check a player's playtime and last activity
+    InspirePlayed:
+        description: Check playtime and last activity
+        usage: |
+            /InspirePlayed load        Force load data from file
+            /InspirePlayed save        Force save data to file
+            /InspirePlayed version    Check InspirePlayed's version
