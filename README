@@ -28,16 +28,19 @@ Features:
 -Ops can load and save the plugin
 
 Planned Features (in order of priority):
--detect afk players and do not track their afk time
 -ops can change playtime in game
 -add configurable file to change colours and prefix
 -promote users to next rank after certain amount of time
 -use MySQL
 
 Known Bugs:
--
+-/inspireplayed load does not save the new values
 
 Changelog:
+July 1, 2011
+0.6 - Added afk timer, set to 15 minutes
+    - Fixed saving data loss bug due to not clearing hashmap
+    - Added automatic backups of data file when plugin is disabled
 June 30, 2011
 0.5 - Added load command
     - Added save command

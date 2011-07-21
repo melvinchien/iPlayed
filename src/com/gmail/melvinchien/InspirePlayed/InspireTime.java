@@ -26,12 +26,13 @@ public class InspireTime {
 	public InspireTime(long playtime, String lastactive) {
 		this.playtime = playtime;
 		this.lastactive = lastactive;
-		this.afktime = 0;
+		this.time = 0;
+		this.afktimer = 0;
+		this.afk = false;
 	}
 
 	public InspireTime() {
 		this(0L, "0000000000");
-		login();
 	}
 
 	// Log in player and set lastactive and afktime to current time
@@ -39,19 +40,28 @@ public class InspireTime {
 		Calendar c = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat("MMddyyHHmm");
 		lastactive = sdf.format(c.getTime());
-		afktime = getCurrentTime();
+		time = getCurrentTime();
+		afk = false;
+		updateAFKTimer();
 	}
 
 	// Log out player and update playtime and reset afktime
 	public void logout() {
 		updatePlaytime();
-		afktime = 0;
+		time = 0;
+		afktimer = 0;
+		afk = false;
 	}
 
 	// Update the playtime and set lastactive to current time in minutes
 	public void updatePlaytime() {
-		playtime += getCurrentTime() - afktime;
-		login();
+		if (!isAFK()) {
+			playtime += afktimer - time;
+			login();
+		} else {
+			time = getCurrentTime();
+		}
+
 	}
 
 	// Return current time in minutes
@@ -92,6 +102,10 @@ public class InspireTime {
 		+ timeMinutes + stMinutes;
 	}
 
+	public long getPlaytimeRaw() {
+		return playtime;
+	}
+
 	// Format last login time to string of month, date, year, hours, minutes
 	public String getLastActive() {
 		Calendar cal = Calendar.getInstance();
@@ -104,7 +118,23 @@ public class InspireTime {
 		sdf.format(cal.getTime()) + ".";
 	}
 
-	long playtime;
-	String lastactive;
-	long afktime;
+	public String getLastActiveRaw() {
+		return lastactive;
+	}
+
+	public void updateAFKTimer() {
+		afktimer = getCurrentTime();
+	}
+
+	public boolean isAFK() {
+		if (getCurrentTime() - afktimer >= 5)
+			return true;
+		return false;
+	}
+
+	private long playtime;
+	private String lastactive;
+	private long time;
+	private long afktimer;
+	private boolean afk;
 }

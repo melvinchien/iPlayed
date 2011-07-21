@@ -21,6 +21,7 @@ package com.gmail.melvinchien.InspirePlayed;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerListener;
+import org.bukkit.event.player.PlayerMoveEvent;
 //import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
@@ -42,6 +43,7 @@ public class InspirePlayedPlayerListener extends PlayerListener {
 			plugin.get(player).login();
 		} else {
 			InspireTime it = new InspireTime();
+			it.login();
 			plugin.put(player, it);
 		}
 	}
@@ -57,8 +59,10 @@ public class InspirePlayedPlayerListener extends PlayerListener {
 		plugin.mapTimes.get(player).logout();
 		plugin.saveData();
 	}
-
-
-
+	
+	public void onPlayerMove(PlayerMoveEvent event) {
+		String player = event.getPlayer().getName();
+		plugin.updateAFK(player);
+	}
 
 }

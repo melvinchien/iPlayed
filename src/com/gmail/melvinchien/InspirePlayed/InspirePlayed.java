@@ -24,6 +24,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -48,7 +50,14 @@ public class InspirePlayed extends JavaPlugin{
 
 
 	public void onDisable() {
-		saveData();
+		Calendar cal = Calendar.getInstance();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyMMdd");
+		String backupPath = mainDirectory + "playtimes_" + sdf.format(cal.getTime());
+		sdf = new SimpleDateFormat("HHmm");
+		backupPath += "_" + sdf.format(cal.getTime()) + ".txt";
+		File backupFile = new File(backupPath);
+		saveData(backupFile);
+		saveData(timesFile);
 		log.info("[" + pdf.getName() + "] " + pdf.getName() + " " + 
 				pdf.getVersion() + " is disabled.");
 	}
@@ -70,17 +79,18 @@ public class InspirePlayed extends JavaPlugin{
 
 		// Register events
 		PluginManager pm = getServer().getPluginManager();
-		pm.registerEvent(Event.Type.PLAYER_JOIN, playerListener, Event.Priority.Normal, this);
-		pm.registerEvent(Event.Type.PLAYER_QUIT, playerListener, Event.Priority.Normal, this);
-		pm.registerEvent(Event.Type.PLAYER_KICK, playerListener, Event.Priority.Normal, this);
+		pm.registerEvent(Event.Type.PLAYER_JOIN, playerListener, Event.Priority.Monitor, this);
+		pm.registerEvent(Event.Type.PLAYER_QUIT, playerListener, Event.Priority.Monitor, this);
+		pm.registerEvent(Event.Type.PLAYER_KICK, playerListener, Event.Priority.Monitor, this);
+		pm.registerEvent(Event.Type.PLAYER_MOVE, playerListener, Event.Priority.Monitor, this);
 
 		log.info("[" + pdf.getName() + "] " + pdf.getName() + " " + 
 				pdf.getVersion() + " is enabled.");
 	}
 
-	public void saveData() {
+	public void saveData(File file) {
 		try {
-			FileWriter fileOut = new FileWriter(timesFile);
+			FileWriter fileOut = new FileWriter(file);
 			BufferedWriter out = new BufferedWriter (fileOut);
 			out.write(pdf.getVersion() + "\n");
 			Iterator<Map.Entry<String, InspireTime>> mapIt = mapTimes.entrySet().iterator();
@@ -88,7 +98,7 @@ public class InspirePlayed extends JavaPlugin{
 				Map.Entry<String, InspireTime> entry = 
 					(Map.Entry<String, InspireTime>)mapIt.next();
 				InspireTime it = entry.getValue();
-				out.write(entry.getKey() + ";" + it.playtime + ";" + it.lastactive + "\n");
+				out.write(entry.getKey() + ";" + it.getPlaytimeRaw() + ";" + it.getLastActiveRaw() + "\n");
 			}
 			out.close();
 			log.info("[" + pdf.getName() + "] " + "Data successfully saved.");
@@ -100,7 +110,6 @@ public class InspirePlayed extends JavaPlugin{
 			FileReader fileIn = new FileReader(timesFile);
 			BufferedReader in = new BufferedReader(fileIn);
 			String inLine = in.readLine();
-			// Check for old version of playtimes.txt
 			if (Double.parseDouble(inLine) >= 0.3)
 				while (in.ready()) {
 					inLine = in.readLine();
@@ -158,11 +167,12 @@ public class InspirePlayed extends JavaPlugin{
 				if (args.length == 0)
 					return false;
 				else if (args[0].equalsIgnoreCase("load")) {
+					mapTimes.clear();
 					loadData();
 					sender.sendMessage(ChatColor.GREEN + "[IP] " + 
 							ChatColor.WHITE + "Data successfully loaded.");
 				} else if (args[0].equalsIgnoreCase("save")) {
-					saveData();
+					saveData(timesFile);
 					sender.sendMessage(ChatColor.GREEN + "[IP] " + 
 							ChatColor.WHITE + "Data successfully saved.");
 				} else if (args[0].equalsIgnoreCase("version")) {
@@ -193,5 +203,10 @@ public class InspirePlayed extends JavaPlugin{
 
 	public void remove(String player) {
 		mapTimes.remove(player);
+	}
+	
+	public void updateAFK(String player) {
+		InspireTime it = get(player);
+		it.updateAFKTimer();
 	}
 }
