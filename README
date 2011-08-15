@@ -1,6 +1,6 @@
 /**
-  * InspirePlayed - A Bukkit playtime plugin for Minecraft
-  * Copyright (C) 2011 Melvin "VeiN" Chien <melvin.chien@gmail.com>
+  * iPlayed - A Bukkit playtime plugin for Minecraft
+  * Copyright (C) 2011 Melvin "inspireVeiN" Chien <melvin.chien@gmail.com>
   * 
   * This program is free software: you can redistribute it and/or modify
   * it under the terms of the GNU General Public License as published by
@@ -34,9 +34,11 @@ Planned Features (in order of priority):
 -use MySQL
 
 Known Bugs:
--/inspireplayed load does not save the new values
+-/iplayed load does not save the new values
 
 Changelog:
+August 8, 2011
+0.7 - Renamed plugin from InspirePlayed to iPlayed
 July 1, 2011
 0.6 - Added afk timer, set to 15 minutes
     - Fixed saving data loss bug due to not clearing hashmap
