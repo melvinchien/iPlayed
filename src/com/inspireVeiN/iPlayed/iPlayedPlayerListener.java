@@ -1,6 +1,7 @@
 /**
  * iPlayed - A Bukkit playtime plugin for Minecraft
  * Copyright (C) 2011 Melvin "inspireVeiN" Chien <melvin.chien@gmail.com>
+ * @author inspireVeiN
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,51 +19,66 @@
 
 package com.inspireVeiN.iPlayed;
 
+import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerListener;
-import org.bukkit.event.player.PlayerMoveEvent;
-//import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.joda.time.DateTime;
+
+import com.mini.Arguments;
+import com.mini.Mini;
 
 public class iPlayedPlayerListener extends PlayerListener {
 	private final iPlayed plugin;
+	private Mini timesdb;
 
 	public iPlayedPlayerListener(iPlayed instance) {
 		plugin = instance;
-	}
-
-	public void onPlayerJoin(PlayerJoinEvent event) {
-		String player = event.getPlayer().getName();
-
-		if (plugin.contains(player))
-			plugin.get(player).login();
-		else if (plugin.contains(player.toLowerCase())) {
-			plugin.put(player, plugin.get(player.toLowerCase()));
-			plugin.remove(player.toLowerCase());
-			plugin.get(player).login();
-		} else {
-			iPlayedTime it = new iPlayedTime();
-			it.login();
-			plugin.put(player, it);
-		}
-	}
-
-	public void onPlayerKick(PlayerKickEvent event) {
-		String player = event.getPlayer().getName();
-		plugin.get(player).logout();
-		plugin.saveData(plugin.timesFile);
-	}
-
-	public void onPlayerQuit(PlayerQuitEvent event) {
-		String player = event.getPlayer().getName();
-		plugin.mapTimes.get(player).logout();
-		plugin.saveData(plugin.timesFile);
+		timesdb = plugin.timesdb;
 	}
 	
-	public void onPlayerMove(PlayerMoveEvent event) {
-		String player = event.getPlayer().getName();
-		plugin.updateAFK(player);
+	public void onPlayerJoin(PlayerJoinEvent event) {
+		login(event.getPlayer());
+	}
+	
+	public void onPlayerKick(PlayerKickEvent event) {
+		logout(event.getPlayer());
+	}
+	
+	public void onPlayerQuit(PlayerQuitEvent event) {
+		logout(event.getPlayer());
+	}
+	
+	private void login (Player p) {
+		String player = p.getName();
+		Arguments entry;
+		if (timesdb.hasIndex(player))
+			entry = timesdb.getArguments(player);
+		else {
+			entry = new Arguments(player);
+			entry.setValue("playtime", "0");
+			timesdb.addIndex(entry.getKey(), entry);
+		}
+		DateTime dt = new DateTime();
+		entry.setValue("lastlogin", dt.getMonthOfYear() + "/" + 
+				dt.getDayOfMonth() + "/" + dt.getYear());
+		entry.setValue("startTime", Integer.toString(dt.getMinuteOfDay()));
 	}
 
+	private void logout (Player p) {
+		String player = p.getName();
+		Arguments entry = timesdb.getArguments(player);
+		DateTime dt = new DateTime();
+		int startTime = entry.getInteger("startTime");
+		int endTime = dt.getMinuteOfDay();
+		int playtime = entry.getInteger("playtime");
+		if (endTime < startTime)
+			playtime += 1440 - startTime + endTime;
+		else
+			playtime += endTime - startTime;
+		entry.setValue("playtime", Integer.toString(playtime));
+		entry.setValue("startTime", "");
+		timesdb.update();
+	}
 }

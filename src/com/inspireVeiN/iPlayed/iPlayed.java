@@ -1,12 +1,13 @@
 /**
  * iPlayed - A Bukkit playtime plugin for Minecraft
  * Copyright (C) 2011 Melvin "inspireVeiN" Chien <melvin.chien@gmail.com>
+ * @author inspireVeiN
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *  
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -18,17 +19,6 @@
 
 package com.inspireVeiN.iPlayed;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.logging.Logger;
 
 import org.bukkit.ChatColor;
@@ -40,172 +30,113 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class iPlayed extends JavaPlugin{
+import com.mini.Arguments;
+import com.mini.Mini;
+
+public class iPlayed extends JavaPlugin {
 	private iPlayedPlayerListener playerListener;
 	private PluginDescriptionFile pdf;
-	public HashMap<String, iPlayedTime> mapTimes;
-	static String mainDirectory = "plugins/iPlayed/";
-	static File timesFile = new File(mainDirectory + "playtimes.txt");
+	static String folder = "plugins/iPlayed/";
+	public Mini timesdb;
 	Logger log = Logger.getLogger("Minecraft");
 
 	public void onDisable() {
-		Calendar cal = Calendar.getInstance();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyMMdd");
-		String backupPath = mainDirectory + "playtimes_" + sdf.format(cal.getTime());
-		sdf = new SimpleDateFormat("HHmm");
-		backupPath += "_" + sdf.format(cal.getTime()) + ".txt";
-		File backupFile = new File(backupPath);
-		saveData(backupFile);
-		saveData(timesFile);
-		log.info("[" + pdf.getName() + "] " + pdf.getName() + " " + 
-				pdf.getVersion() + " is disabled.");
+		timesdb.update();
+		log.info("[" + pdf.getName() + "] " + pdf.getName() + " " + pdf.getVersion() + " disabled.");
 	}
 
 	public void onEnable() {
 		playerListener = new iPlayedPlayerListener(this);
 		pdf = this.getDescription();
-		mapTimes = new HashMap<String, iPlayedTime>();
-
-		// Create directory and file if they do not already exist
-		new File(mainDirectory).mkdir();
-		if (!timesFile.exists()) {
-			try {
-				timesFile.createNewFile();
-			} catch (IOException e) {e.printStackTrace();}
-		}
-		else
-			loadData();
-
-		// Register events
+		timesdb = new Mini(folder, "playtimes.db");
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvent(Event.Type.PLAYER_JOIN, playerListener, Event.Priority.Monitor, this);
 		pm.registerEvent(Event.Type.PLAYER_QUIT, playerListener, Event.Priority.Monitor, this);
 		pm.registerEvent(Event.Type.PLAYER_KICK, playerListener, Event.Priority.Monitor, this);
-		pm.registerEvent(Event.Type.PLAYER_MOVE, playerListener, Event.Priority.Monitor, this);
-
-		log.info("[" + pdf.getName() + "] " + pdf.getName() + " " + 
-				pdf.getVersion() + " is enabled.");
+		log.info("[" + pdf.getName() + "] " + pdf.getName() + " " + pdf.getVersion() + " enabled.");
 	}
 
-	public void saveData(File file) {
-		try {
-			FileWriter fileOut = new FileWriter(file);
-			BufferedWriter out = new BufferedWriter (fileOut);
-			out.write(pdf.getVersion() + "\n");
-			Iterator<Map.Entry<String, iPlayedTime>> mapIt = mapTimes.entrySet().iterator();
-			while (mapIt.hasNext()) {
-				Map.Entry<String, iPlayedTime> entry = 
-					(Map.Entry<String, iPlayedTime>)mapIt.next();
-				iPlayedTime it = entry.getValue();
-				out.write(entry.getKey() + ";" + it.getPlaytimeRaw() + ";" + it.getLastActiveRaw() + "\n");
-			}
-			out.close();
-			log.info("[" + pdf.getName() + "] " + "Data successfully saved.");
-		} catch (IOException e) {e.printStackTrace();}
-	}
-
-	public void loadData() {
-		try {
-			FileReader fileIn = new FileReader(timesFile);
-			BufferedReader in = new BufferedReader(fileIn);
-			String inLine = in.readLine();
-			if (Double.parseDouble(inLine) >= 0.3)
-				while (in.ready()) {
-					inLine = in.readLine();
-					String[] inText = inLine.split(";");
-					long playtime = Long.parseLong(inText[1]);
-					String lastactive = "0000000000";
-					if (inText.length == 3)
-						lastactive = inText[2];
-					iPlayedTime it = new iPlayedTime(playtime, lastactive);
-					put(inText[0], it);
-				}
-			else
-				log.severe("[" + pdf.getName() + "] " + "Error loading data file!");
-			in.close();
-			log.info("[" + pdf.getName() + "] " + "Data successfully loaded.");
-		} catch (IOException e) {e.printStackTrace();}
-	}
-
-	public boolean onCommand(CommandSender sender, Command cmd,
-			String commandLabel, String[] args) {
-		if (commandLabel.equalsIgnoreCase("played")) {
+	public boolean onCommand(CommandSender sender, Command cmd, String cmdLabel, String[] args) {
+		if (cmdLabel.equalsIgnoreCase("played")) {
 			String player;
-			boolean online = false;
-			if (args.length == 0) {
+			if (args.length == 0)
 				player = ((Player)sender).getName();
-				online = true;
-			} else if (args[0].equalsIgnoreCase("help")) {
-				return false;
-			} else {
+			else
 				player = args[0];
-			}
-			Iterator<Map.Entry<String, iPlayedTime>> mapIt = mapTimes.entrySet().iterator();
-			while (mapIt.hasNext()) {
-				Map.Entry<String, iPlayedTime> entry = 
-					(Map.Entry<String, iPlayedTime>)mapIt.next();
-				if (entry.getKey().equalsIgnoreCase(player)) {
-					player = entry.getKey();
-					iPlayedTime it = entry.getValue();
-					if (online)
-						it.updatePlaytime();
-					sender.sendMessage(ChatColor.GREEN + "[iPlayed] " + ChatColor.RED + 
-							player + ChatColor.WHITE + " has played for " + 
-							ChatColor.GREEN + it.getPlaytime());
-					sender.sendMessage(ChatColor.GREEN + "[iPlayed] " + ChatColor.RED + 
-							player + ChatColor.WHITE +  "'s last activity was on " + 
-							ChatColor.GREEN + it.getLastActive());
-					return true;
-				}
-			}
-			sender.sendMessage(ChatColor.GREEN + "[IP] " + ChatColor.RED + 
-					player + ChatColor.WHITE + " does not exist!");
+
+			Arguments entry = null;
+			if (timesdb.hasIndex(player))
+				entry = timesdb.getArguments(player);
+			if (entry == null)
+				sender.sendMessage(playtimeMessage(player, false, entry));
+			else
+				sender.sendMessage(playtimeMessage(player, true, entry));
 			return true;
-		} else if (commandLabel.equalsIgnoreCase("iPlayed")) {
+		} else if (cmdLabel.equalsIgnoreCase("iPlayed")) {
 			if (sender.isOp()) {
-				if (args.length == 0)
-					return false;
-				else if (args[0].equalsIgnoreCase("load")) {
-					mapTimes.clear();
-					loadData();
-					sender.sendMessage(ChatColor.GREEN + "[IP] " + 
-							ChatColor.WHITE + "Data successfully loaded.");
-				} else if (args[0].equalsIgnoreCase("save")) {
-					saveData(timesFile);
-					sender.sendMessage(ChatColor.GREEN + "[IP] " + 
-							ChatColor.WHITE + "Data successfully saved.");
-				} else if (args[0].equalsIgnoreCase("version")) {
-					sender.sendMessage(ChatColor.GREEN + "[IP] " + 
-							ChatColor.WHITE + "Version " + ChatColor.RED + pdf.getVersion() + 
-							ChatColor.WHITE + " is currently running.");
-				} 
-			} else {
-				sender.sendMessage(ChatColor.RED + 
-				"You do not have permission to use this command!");
-			}
+				if (args.length == 0) 
+					sender.sendMessage(ChatColor.GREEN + "[" + pdf.getName() + "] " + ChatColor.WHITE +
+							"Version " + ChatColor.BLUE + pdf.getVersion());
+				else if (args.length == 3 && args[0].equalsIgnoreCase("add")) {
+					String player = args[1];
+					int amount = Integer.parseInt(args[2]);
+					Arguments entry = null;
+					if (timesdb.hasIndex(player))
+						entry = timesdb.getArguments(player);
+					if (entry == null)
+						sender.sendMessage(playtimeMessage(player, false, entry));
+					else {
+						int playtime = entry.getInteger("playtime") + amount;
+						entry.setValue("playtime", Integer.toString(playtime));
+						sender.sendMessage(ChatColor.GREEN + "[" + pdf.getName() + "] " + ChatColor.BLUE + 
+								amount + " minutes" + ChatColor.WHITE + " has been added to " + ChatColor.BLUE + 
+								player + ChatColor.WHITE + "'s playtime.");
+					}
+
+				}
+			} else
+				sender.sendMessage(ChatColor.RED + "You do not have permission to use this command!");
 			return true;
 		}
 		return false;
 	}
 
-	public boolean contains(String player) {
-		return mapTimes.containsKey(player);
+	private String playtimeMessage (String player, boolean exists, Arguments entry) {
+		if (exists)
+			return ChatColor.GREEN + "[" + pdf.getName() + "] " + ChatColor.BLUE + player + ChatColor.WHITE + 
+			" has played for " + ChatColor.BLUE + formatTime(entry.getInteger("playtime")) + "\n" + ChatColor.GREEN + 
+			"[" + pdf.getName() + "] " + ChatColor.BLUE + player + ChatColor.WHITE + "'s last login was on " + 
+			ChatColor.BLUE + entry.getValue("lastlogin");
+		else
+			return ChatColor.GREEN + "[" + pdf.getName() + "] " + ChatColor.BLUE + 
+			player + ChatColor.WHITE + " does not exist!";
 	}
+	private String formatTime(int playtime) {
+		int tempTime = playtime;
+		int timeDays = tempTime / 60 / 24;
+		tempTime -= timeDays * 24 * 60;
+		int timeHours = tempTime / 60;
+		tempTime -= timeHours * 60;
+		int timeMinutes = tempTime;
 
-	public iPlayedTime get(String player) {
-		return mapTimes.get(player);
-	}
+		String stDays = "";
+		String stHours = "";
+		String stMinutes = "";
+		if (timeDays == 1)
+			stDays = " day, ";
+		else if (timeDays > 1)
+			stDays = " days, ";
+		if (timeHours == 1)
+			stHours = " hour, ";
+		else if (timeHours > 1)
+			stHours = " hours, ";
+		if (timeMinutes == 1)  // Special case for minutes
+			stMinutes = " minute."; 
+		else
+			stMinutes = " minutes.";  // Will output N minutes or 0 minutes.
 
-	public void put(String player, iPlayedTime it) {
-		mapTimes.put(player, it);
-	}
-
-	public void remove(String player) {
-		mapTimes.remove(player);
-	}
-	
-	public void updateAFK(String player) {
-		iPlayedTime it = get(player);
-		it.updateAFKTimer();
+		return (timeDays > 0 ? timeDays : "") + stDays + 
+		(timeHours > 0 ? timeHours : "") + stHours
+		+ timeMinutes + stMinutes;
 	}
 }

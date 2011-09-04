@@ -1,6 +1,6 @@
 name: iPlayed
-main: com.gmail.melvinchien.iPlayed.iPlayed
-version: 0.7
+main: com.inspireVeiN.iPlayed.iPlayed
+version: 0.8
 author: VeiN
 description: Track playtime and last activity time of players
 commands:

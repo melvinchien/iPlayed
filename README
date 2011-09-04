@@ -19,24 +19,27 @@
 Purpose: Track amount of time players spend online and last activity time.
 
 Features:
--/played - check your own playtime and time of last activity
--/played <player> - check another player's playtime and time of last activity
+-/played - check your own playtime
+-/played <name> - check another player's playtime
 -Sends days, hours, and minutes spent online and time of last activity
 -Players' names are not case sensitive
--User data saved to playtimes.txt, user-editable only when server is off
--File saves occur when a player quits or types /played
--Ops can load and save the plugin
+-File saves occur when a player quits
+-Ops can add playtime to players in game
 
 Planned Features (in order of priority):
--ops can change playtime in game
 -add configurable file to change colours and prefix
 -promote users to next rank after certain amount of time
 -use MySQL
 
 Known Bugs:
--/iplayed load does not save the new values
 
 Changelog:
+September 3, 2011
+0.8 - Complete code rewrite
+    - Afk timer removed
+    - InspireTime class removed
+    - Using Jova-Time
+    - Using Nijikokun's Mini DB
 August 8, 2011
 0.7 - Renamed plugin from InspirePlayed to iPlayed
 July 1, 2011
