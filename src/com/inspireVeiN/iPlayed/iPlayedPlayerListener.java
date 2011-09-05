@@ -50,13 +50,12 @@ public class iPlayedPlayerListener extends PlayerListener {
 	private void login (Player p) {
 		String player = p.getName();
 		Arguments entry = null;
-		if (plugin.timesdb == null || plugin.timesdb.hasIndex(player))
-			entry = plugin.timesdb.getArguments(player);
-		else {
+		if (plugin.timesdb == null || !(plugin.timesdb.hasIndex(player))) {
 			entry = new Arguments(player);
 			entry.setValue("playtime", "0");
 			plugin.timesdb.addIndex(entry.getKey(), entry);
-		}
+		} else 
+			entry = plugin.timesdb.getArguments(player);
 		DateTime dt = new DateTime();
 		entry.setValue("lastlogin", dt.getMonthOfYear() + "/" + 
 				dt.getDayOfMonth() + "/" + dt.getYear());

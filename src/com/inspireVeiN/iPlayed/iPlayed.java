@@ -107,7 +107,7 @@ public class iPlayed extends JavaPlugin {
 		if (exists)
 			return ChatColor.GREEN + "[" + pdf.getName() + "] " + ChatColor.BLUE + player + ChatColor.WHITE + 
 			" has played for " + ChatColor.BLUE + formatTime(entry.getInteger("playtime")) + ChatColor.WHITE + 
-			"and last login was on " + ChatColor.BLUE + entry.getValue("lastlogin");
+			" and last login was on " + ChatColor.BLUE + entry.getValue("lastlogin");
 		else
 			return ChatColor.GREEN + "[" + pdf.getName() + "] " + ChatColor.BLUE + 
 			player + ChatColor.WHITE + " does not exist!";

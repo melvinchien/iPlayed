@@ -34,7 +34,7 @@
         </includes>
       </resource>
     </resources>
-    <finalName>iPlayed</finalName>
+    <finalName>iPlayed-0.8</finalName>
     <plugins>
       <plugin>
         <artifactId>maven-shade-plugin</artifactId>
