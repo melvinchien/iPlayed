@@ -19,6 +19,7 @@
 
 package com.inspireVeiN.iPlayed;
 
+import com.mini.Arguments;
 import java.util.logging.Logger;
 
 import org.bukkit.ChatColor;
@@ -30,8 +31,8 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.mini.Arguments;
 import com.mini.Mini;
+
 
 public class iPlayed extends JavaPlugin {
 	private iPlayedPlayerListener playerListener;
@@ -88,6 +89,7 @@ public class iPlayed extends JavaPlugin {
 					else {
 						int playtime = entry.getInteger("playtime") + amount;
 						entry.setValue("playtime", Integer.toString(playtime));
+						timesdb.update();
 						sender.sendMessage(ChatColor.GREEN + "[" + pdf.getName() + "] " + ChatColor.BLUE + 
 								amount + " minutes" + ChatColor.WHITE + " has been added to " + ChatColor.BLUE + 
 								player + ChatColor.WHITE + "'s playtime.");
@@ -104,9 +106,8 @@ public class iPlayed extends JavaPlugin {
 	private String playtimeMessage (String player, boolean exists, Arguments entry) {
 		if (exists)
 			return ChatColor.GREEN + "[" + pdf.getName() + "] " + ChatColor.BLUE + player + ChatColor.WHITE + 
-			" has played for " + ChatColor.BLUE + formatTime(entry.getInteger("playtime")) + "\n" + ChatColor.GREEN + 
-			"[" + pdf.getName() + "] " + ChatColor.BLUE + player + ChatColor.WHITE + "'s last login was on " + 
-			ChatColor.BLUE + entry.getValue("lastlogin");
+			" has played for " + ChatColor.BLUE + formatTime(entry.getInteger("playtime")) + ChatColor.WHITE + 
+			"and last login was on " + ChatColor.BLUE + entry.getValue("lastlogin");
 		else
 			return ChatColor.GREEN + "[" + pdf.getName() + "] " + ChatColor.BLUE + 
 			player + ChatColor.WHITE + " does not exist!";
@@ -131,9 +132,9 @@ public class iPlayed extends JavaPlugin {
 		else if (timeHours > 1)
 			stHours = " hours, ";
 		if (timeMinutes == 1)  // Special case for minutes
-			stMinutes = " minute."; 
+			stMinutes = " minute"; 
 		else
-			stMinutes = " minutes.";  // Will output N minutes or 0 minutes.
+			stMinutes = " minutes";  // Will output N minutes or 0 minutes.
 
 		return (timeDays > 0 ? timeDays : "") + stDays + 
 		(timeHours > 0 ? timeHours : "") + stHours

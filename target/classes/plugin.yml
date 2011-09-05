@@ -1,0 +1,16 @@
+name: iPlayed
+main: com.inspireVeiN.iPlayed.iPlayed
+version: 0.8
+author: VeiN
+description: Track playtime and last activity time of players
+commands:
+    played:
+        description: Check playtime and last activity
+        usage: |
+            /played                Check your playtime and last activity
+            /played <player>     Check a player's playtime and last activity
+    iPlayed:
+        description: Check playtime and last activity
+        usage: |
+            /iPlayed             Check iPlayed's version
+            /iPlayed add <player> <minutes>  Add minutes to player's playtime

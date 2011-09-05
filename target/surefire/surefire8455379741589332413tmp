@@ -1,5 +1,5 @@
 #surefire
-#Sun Sep 04 18:30:06 EDT 2011
+#Sun Sep 04 21:04:18 EDT 2011
 testClassesDirectory=/Users/melvin/Bukkit Plugins/iPlayed/target/test-classes
 classPathUrl.4=/Users/melvin/.m2/repository/com/googlecode/json-simple/json-simple/1.1/json-simple-1.1.jar
 classPathUrl.3=/Users/melvin/.m2/repository/org/yaml/snakeyaml/1.7/snakeyaml-1.7.jar

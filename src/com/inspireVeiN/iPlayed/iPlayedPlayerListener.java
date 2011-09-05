@@ -26,49 +26,47 @@ import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.joda.time.DateTime;
 
-import com.mini.Arguments;
-import com.mini.Mini;
+import com.mini.*;
 
 public class iPlayedPlayerListener extends PlayerListener {
 	private final iPlayed plugin;
-	private Mini timesdb;
 
 	public iPlayedPlayerListener(iPlayed instance) {
 		plugin = instance;
-		timesdb = plugin.timesdb;
 	}
-	
+
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		login(event.getPlayer());
 	}
-	
+
 	public void onPlayerKick(PlayerKickEvent event) {
 		logout(event.getPlayer());
 	}
-	
+
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		logout(event.getPlayer());
 	}
-	
+
 	private void login (Player p) {
 		String player = p.getName();
-		Arguments entry;
-		if (timesdb.hasIndex(player))
-			entry = timesdb.getArguments(player);
+		Arguments entry = null;
+		if (plugin.timesdb == null || plugin.timesdb.hasIndex(player))
+			entry = plugin.timesdb.getArguments(player);
 		else {
 			entry = new Arguments(player);
 			entry.setValue("playtime", "0");
-			timesdb.addIndex(entry.getKey(), entry);
+			plugin.timesdb.addIndex(entry.getKey(), entry);
 		}
 		DateTime dt = new DateTime();
 		entry.setValue("lastlogin", dt.getMonthOfYear() + "/" + 
 				dt.getDayOfMonth() + "/" + dt.getYear());
 		entry.setValue("startTime", Integer.toString(dt.getMinuteOfDay()));
+		plugin.timesdb.update();
 	}
 
 	private void logout (Player p) {
 		String player = p.getName();
-		Arguments entry = timesdb.getArguments(player);
+		Arguments entry = plugin.timesdb.getArguments(player);
 		DateTime dt = new DateTime();
 		int startTime = entry.getInteger("startTime");
 		int endTime = dt.getMinuteOfDay();
@@ -79,6 +77,6 @@ public class iPlayedPlayerListener extends PlayerListener {
 			playtime += endTime - startTime;
 		entry.setValue("playtime", Integer.toString(playtime));
 		entry.setValue("startTime", "");
-		timesdb.update();
+		plugin.timesdb.update();
 	}
 }
