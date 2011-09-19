@@ -88,8 +88,7 @@ public class iPlayed extends JavaPlugin {
 						sender.sendMessage(playtimeMessage(player, false, entry));
 					else {
 						int playtime = entry.getInteger("playtime") + amount;
-						entry.setValue("playtime", Integer.toString(playtime));
-						timesdb.update();
+						timesdb.setArgument(player, "playtime", Integer.toString(playtime), true);
 						sender.sendMessage(ChatColor.GREEN + "[" + pdf.getName() + "] " + ChatColor.BLUE + 
 								amount + " minutes" + ChatColor.WHITE + " has been added to " + ChatColor.BLUE + 
 								player + ChatColor.WHITE + "'s playtime.");

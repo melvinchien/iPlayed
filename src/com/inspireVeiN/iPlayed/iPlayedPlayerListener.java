@@ -40,7 +40,7 @@ public class iPlayedPlayerListener extends PlayerListener {
 	}
 
 	public void onPlayerKick(PlayerKickEvent event) {
-		logout(event.getPlayer());
+		resetStartTime(event.getPlayer());
 	}
 
 	public void onPlayerQuit(PlayerQuitEvent event) {
@@ -50,17 +50,18 @@ public class iPlayedPlayerListener extends PlayerListener {
 	private void login (Player p) {
 		String player = p.getName();
 		Arguments entry = null;
-		if (plugin.timesdb == null || !(plugin.timesdb.hasIndex(player))) {
+		if (plugin.timesdb.hasIndex(player))
+			entry = plugin.timesdb.getArguments(player);
+		else {
 			entry = new Arguments(player);
 			entry.setValue("playtime", "0");
-			plugin.timesdb.addIndex(entry.getKey(), entry);
-		} else 
-			entry = plugin.timesdb.getArguments(player);
+			plugin.timesdb.addIndex(player, entry);
+			plugin.timesdb.update();
+		}
 		DateTime dt = new DateTime();
-		entry.setValue("lastlogin", dt.getMonthOfYear() + "/" + 
-				dt.getDayOfMonth() + "/" + dt.getYear());
-		entry.setValue("startTime", Integer.toString(dt.getMinuteOfDay()));
-		plugin.timesdb.update();
+		plugin.timesdb.setArgument(player, "lastlogin", dt.getMonthOfYear() + "/" + 
+				dt.getDayOfMonth() + "/" + dt.getYear(), true);
+		plugin.timesdb.setArgument(player, "startTime", Integer.toString(dt.getMinuteOfDay()), true);
 	}
 
 	private void logout (Player p) {
@@ -70,12 +71,17 @@ public class iPlayedPlayerListener extends PlayerListener {
 		int startTime = entry.getInteger("startTime");
 		int endTime = dt.getMinuteOfDay();
 		int playtime = entry.getInteger("playtime");
-		if (endTime < startTime)
+		if (endTime <= startTime)
 			playtime += 1440 - startTime + endTime;
 		else
 			playtime += endTime - startTime;
-		entry.setValue("playtime", Integer.toString(playtime));
-		entry.setValue("startTime", "");
-		plugin.timesdb.update();
+		plugin.timesdb.setArgument(player, "playtime", playtime, true);
+		plugin.timesdb.setArgument(player, "startTime", "0", true);
+	}
+
+	private void resetStartTime (Player p) {
+		String player = p.getName();
+		DateTime dt = new DateTime();
+		plugin.timesdb.setArgument(player, "startTime", Integer.toString(dt.getMinuteOfDay()), true);
 	}
 }

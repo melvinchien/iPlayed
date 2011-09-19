@@ -125,7 +125,7 @@ public class Mini {
      * @return
      */
     public boolean hasIndex(String key) {
-        return this.Indexes.containsKey(key.toLowerCase());
+        return this.Indexes == null || this.Indexes.containsKey(key.toLowerCase());
     }
 
     /**

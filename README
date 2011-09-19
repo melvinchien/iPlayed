@@ -34,6 +34,8 @@ Planned Features (in order of priority):
 Known Bugs:
 
 Changelog:
+September 19, 2011
+0.81 - Player's current playtime is reset when they are kicked
 September 3, 2011
 0.8 - Complete code rewrite
     - Afk timer removed
