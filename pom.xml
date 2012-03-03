@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.inspireVeiN</groupId>
 	<artifactId>iPlayed</artifactId>
-	<version>0.8</version>
+	<version>0.81</version>
 	<name>iPlayed</name>
 	<repositories>
 		<repository>
@@ -13,7 +13,7 @@
 	</repositories>
 	<build>
 			<defaultGoal>clean install</defaultGoal>
-		<finalName>iPlayed-0.8</finalName>
+		<finalName>iPlayed-0.81</finalName>
 		<sourceDirectory>${basedir}/src/com/</sourceDirectory>
 		<resources>
 			<resource>
